@@ -1,7 +1,7 @@
 # AISentinel Python SDK
 
-[![PyPI version](https://badge.fury.io/py/aisentinel.svg)](https://pypi.org/project/aisentinel/)
-[![Python versions](https://img.shields.io/pypi/pyversions/aisentinel.svg)](https://pypi.org/project/aisentinel/)
+[![PyPI version](https://badge.fury.io/py/aisentinel-sdk.svg)](https://pypi.org/project/aisentinel-sdk/)
+[![Python versions](https://img.shields.io/pypi/pyversions/aisentinel-sdk.svg)](https://pypi.org/project/aisentinel-sdk/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/mfifth/aisentinel-python-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/mfifth/aisentinel-python-sdk/actions/workflows/ci.yml)
 
@@ -19,7 +19,7 @@ The official Python SDK for AISentinel - zero-latency governance for AI agents.
 ## Installation
 
 ```bash
-pip install aisentinel
+pip install aisentinel-sdk
 ```
 
 ## Quick Start
