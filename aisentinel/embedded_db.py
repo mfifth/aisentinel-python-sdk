@@ -1,4 +1,5 @@
 """Embedded SQLite database for AISentinel governance data."""
+
 from __future__ import annotations
 
 import json
@@ -170,7 +171,13 @@ class EmbeddedDatabase:
                 INSERT OR REPLACE INTO reports(id, tenant_id, report_type, payload, created_at)
                 VALUES(?, ?, ?, ?, ?)
                 """,
-                (report_id, tenant_id, report_type, self._json_dumps(payload), created_at),
+                (
+                    report_id,
+                    tenant_id,
+                    report_type,
+                    self._json_dumps(payload),
+                    created_at,
+                ),
             )
 
     def fetch_reports(
@@ -224,7 +231,14 @@ class EmbeddedDatabase:
                 INSERT OR REPLACE INTO violations(id, report_id, rule_id, severity, details, created_at)
                 VALUES(?, ?, ?, ?, ?, ?)
                 """,
-                (violation_id, report_id, rule_id, severity, self._json_dumps(details), created_at),
+                (
+                    violation_id,
+                    report_id,
+                    rule_id,
+                    severity,
+                    self._json_dumps(details),
+                    created_at,
+                ),
             )
 
     def record_metric(
@@ -277,7 +291,9 @@ class EmbeddedDatabase:
             for row in rows
         ]
 
-    def cache_preflight_decision(self, cache_hash: str, decision: Dict[str, Any]) -> None:
+    def cache_preflight_decision(
+        self, cache_hash: str, decision: Dict[str, Any]
+    ) -> None:
         """Store a cached preflight decision for offline use."""
         with self._cursor() as cursor:
             cursor.execute(
@@ -288,7 +304,9 @@ class EmbeddedDatabase:
                 (cache_hash, self._json_dumps(decision), time.time()),
             )
 
-    def get_cached_preflight_decision(self, cache_hash: str) -> Optional[Dict[str, Any]]:
+    def get_cached_preflight_decision(
+        self, cache_hash: str
+    ) -> Optional[Dict[str, Any]]:
         """Retrieve a cached preflight decision if available."""
         with self._cursor() as cursor:
             cursor.execute(

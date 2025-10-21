@@ -1,4 +1,5 @@
 """Offline mode detection utilities for the AISentinel SDK."""
+
 from __future__ import annotations
 
 import logging
@@ -49,7 +50,11 @@ class OfflineModeManager:
         """Return whether the environment currently appears online."""
         with self._lock:
             now = time.time()
-            if force_refresh or self._is_online is None or (now - self._last_check) > self._check_interval:
+            if (
+                force_refresh
+                or self._is_online is None
+                or (now - self._last_check) > self._check_interval
+            ):
                 result = self._connectivity_checker()
                 if result and self._is_online is False:
                     LOGGER.info("Connectivity restored; processing offline queue")
@@ -64,7 +69,9 @@ class OfflineModeManager:
         LOGGER.debug("Queued offline operation: %s", description or operation)
 
     def _drain_queue_async(self) -> None:
-        thread = threading.Thread(target=self.process_queue, name="aisentinel-offline-drain", daemon=True)
+        thread = threading.Thread(
+            target=self.process_queue, name="aisentinel-offline-drain", daemon=True
+        )
         thread.start()
 
     def process_queue(self) -> None:
@@ -75,10 +82,14 @@ class OfflineModeManager:
         while not self._queue.empty():
             task = self._queue.get()
             try:
-                LOGGER.debug("Executing queued operation: %s", task.description or task.operation)
+                LOGGER.debug(
+                    "Executing queued operation: %s", task.description or task.operation
+                )
                 task.operation()
             except Exception:  # pragma: no cover - defensive logging
-                LOGGER.exception("Queued offline operation failed: %s", task.description)
+                LOGGER.exception(
+                    "Queued offline operation failed: %s", task.description
+                )
             finally:
                 self._queue.task_done()
 

@@ -1,4 +1,5 @@
 """AISentinel Governor SDK with caching and offline capabilities."""
+
 from __future__ import annotations
 
 import hashlib
@@ -25,13 +26,23 @@ def _json_default(value: Any) -> str:
 class RulepackCache:
     """Local TTL based cache for rulepacks."""
 
-    def __init__(self, cache_dir: Path, ttl_seconds: int, database: Optional[EmbeddedDatabase] = None) -> None:
+    def __init__(
+        self,
+        cache_dir: Path,
+        ttl_seconds: int,
+        database: Optional[EmbeddedDatabase] = None,
+    ) -> None:
         self._cache_dir = cache_dir
         self._cache_dir.mkdir(parents=True, exist_ok=True)
         self._ttl = ttl_seconds
         self._db = database
         self._lock = threading.RLock()
-        self._metrics: Dict[str, int] = {"hits": 0, "misses": 0, "expired": 0, "writes": 0}
+        self._metrics: Dict[str, int] = {
+            "hits": 0,
+            "misses": 0,
+            "expired": 0,
+            "writes": 0,
+        }
 
     def _record_metric(self, name: str) -> None:
         with self._lock:
@@ -104,8 +115,15 @@ class Governor:
         self.session = session or requests.Session()
         self.session.headers.setdefault("Content-Type", "application/json")
         if self.config.token:
-            self.session.headers.update({"Authorization": f"Bearer {self.config.token}"})
-        db_path = Path(database_path or self.config.extra.get("database_path", Path.home() / ".aisentinel" / "governor.sqlite3"))
+            self.session.headers.update(
+                {"Authorization": f"Bearer {self.config.token}"}
+            )
+        db_path = Path(
+            database_path
+            or self.config.extra.get(
+                "database_path", Path.home() / ".aisentinel" / "governor.sqlite3"
+            )
+        )
         self._db = EmbeddedDatabase(db_path)
         self._rulepack_cache = RulepackCache(
             Path(self.config.rulepack_cache_dir),
@@ -122,18 +140,28 @@ class Governor:
         return self.config.base_url.rstrip("/")
 
     def _decision_hash(self, candidate: Dict[str, Any], state: Dict[str, Any]) -> str:
-        payload = json.dumps({"candidate": candidate, "state": state}, sort_keys=True, default=_json_default)
+        payload = json.dumps(
+            {"candidate": candidate, "state": state},
+            sort_keys=True,
+            default=_json_default,
+        )
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
-    def _cache_decision(self, candidate: Dict[str, Any], state: Dict[str, Any], decision: Dict[str, Any]) -> None:
+    def _cache_decision(
+        self, candidate: Dict[str, Any], state: Dict[str, Any], decision: Dict[str, Any]
+    ) -> None:
         cache_hash = self._decision_hash(candidate, state)
         self._db.cache_preflight_decision(cache_hash, decision)
 
-    def _load_cached_decision(self, candidate: Dict[str, Any], state: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def _load_cached_decision(
+        self, candidate: Dict[str, Any], state: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         cache_hash = self._decision_hash(candidate, state)
         return self._db.get_cached_preflight_decision(cache_hash)
 
-    def _record_metric(self, name: str, value: float, labels: Optional[Dict[str, str]] = None) -> None:
+    def _record_metric(
+        self, name: str, value: float, labels: Optional[Dict[str, str]] = None
+    ) -> None:
         self._db.record_metric(name=name, value=value, labels=labels or {})
 
     def preflight(
@@ -171,7 +199,11 @@ class Governor:
         headers = dict(self.session.headers)
         if tenant_config.token and tenant_config.token != self.config.token:
             headers.update({"Authorization": f"Bearer {tenant_config.token}"})
-        response = self.session.post(f"{tenant_config.base_url.rstrip('/')}/preflight", json=data, headers=headers)
+        response = self.session.post(
+            f"{tenant_config.base_url.rstrip('/')}/preflight",
+            json=data,
+            headers=headers,
+        )
         response.raise_for_status()
         decision = response.json()
         self._cache_decision(candidate, state, decision)
@@ -193,7 +225,10 @@ class Governor:
             return tool_fn(**candidate.get("args", {}))
         if decision.get("requires_approval"):
             if require_approval and decision.get("alternatives"):
-                return {"error": "Requires approval", "alternatives": decision["alternatives"]}
+                return {
+                    "error": "Requires approval",
+                    "alternatives": decision["alternatives"],
+                }
             return {
                 "error": "Requires approval",
                 "reasons": decision.get("reasons", []),
@@ -205,7 +240,9 @@ class Governor:
             "alternatives": decision.get("alternatives", []),
         }
 
-    def fetch_rulepack(self, rulepack_id: str, *, version: Optional[str] = None) -> Dict[str, Any]:
+    def fetch_rulepack(
+        self, rulepack_id: str, *, version: Optional[str] = None
+    ) -> Dict[str, Any]:
         """Retrieve a rulepack leveraging the local cache when possible."""
 
         def _download() -> Dict[str, Any]:

@@ -1,4 +1,5 @@
 """Configuration management for the AISentinel Python SDK."""
+
 from __future__ import annotations
 
 import json
@@ -35,7 +36,9 @@ class SDKConfig:
     environment: str = "production"
     tenant_id: Optional[str] = None
     cache_ttl_seconds: int = 300
-    rulepack_cache_dir: str = field(default_factory=lambda: _DEFAULTS["rulepack_cache_dir"])
+    rulepack_cache_dir: str = field(
+        default_factory=lambda: _DEFAULTS["rulepack_cache_dir"]
+    )
     offline_mode_enabled: bool = True
     log_level: str = "INFO"
     extra: Dict[str, Any] = field(default_factory=dict)
@@ -84,7 +87,9 @@ class SDKConfig:
             environment=config_data.get("environment", "production"),
             tenant_id=config_data.get("tenant_id"),
             cache_ttl_seconds=int(config_data.get("cache_ttl_seconds", 300)),
-            rulepack_cache_dir=config_data.get("rulepack_cache_dir", _DEFAULTS["rulepack_cache_dir"]),
+            rulepack_cache_dir=config_data.get(
+                "rulepack_cache_dir", _DEFAULTS["rulepack_cache_dir"]
+            ),
             offline_mode_enabled=bool(config_data.get("offline_mode_enabled", True)),
             log_level=str(config_data.get("log_level", "INFO")),
             extra=extra,
@@ -100,7 +105,9 @@ class SDKConfig:
             with path.open("r", encoding="utf-8") as handle:
                 contents = handle.read().strip()
         except OSError as exc:  # pragma: no cover - IO failure
-            raise ConfigError(f"Failed to read configuration file {path}: {exc}") from exc
+            raise ConfigError(
+                f"Failed to read configuration file {path}: {exc}"
+            ) from exc
         if not contents:
             return {}
         try:
@@ -132,7 +139,9 @@ class SDKConfig:
     @classmethod
     def _normalise(cls, data: Dict[str, Any]) -> None:
         environment = data.get("environment")
-        if environment is None and data.get("base_url", "").startswith("http://localhost"):
+        if environment is None and data.get("base_url", "").startswith(
+            "http://localhost"
+        ):
             data["environment"] = "development"
 
     @classmethod
@@ -159,11 +168,22 @@ class SDKConfig:
             tenant_configs[tenant_id] = SDKConfig(
                 base_url=merged["base_url"],
                 token=merged.get("token"),
-                environment=merged.get("environment", data.get("environment", "production")),
+                environment=merged.get(
+                    "environment", data.get("environment", "production")
+                ),
                 tenant_id=tenant_id,
-                cache_ttl_seconds=int(merged.get("cache_ttl_seconds", data.get("cache_ttl_seconds", 300))),
-                rulepack_cache_dir=merged.get("rulepack_cache_dir", data.get("rulepack_cache_dir", _DEFAULTS["rulepack_cache_dir"])),
-                offline_mode_enabled=bool(merged.get("offline_mode_enabled", data.get("offline_mode_enabled", True))),
+                cache_ttl_seconds=int(
+                    merged.get("cache_ttl_seconds", data.get("cache_ttl_seconds", 300))
+                ),
+                rulepack_cache_dir=merged.get(
+                    "rulepack_cache_dir",
+                    data.get("rulepack_cache_dir", _DEFAULTS["rulepack_cache_dir"]),
+                ),
+                offline_mode_enabled=bool(
+                    merged.get(
+                        "offline_mode_enabled", data.get("offline_mode_enabled", True)
+                    )
+                ),
                 log_level=str(merged.get("log_level", data.get("log_level", "INFO"))),
             )
         return tenant_configs
