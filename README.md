@@ -29,7 +29,7 @@ from aisentinel import Governor
 
 # Initialize the governor
 governor = Governor(
-    base_url="https://api.aisentinel.ai",
+    base_url="https://aisentinel.fly.dev",
     token="your-api-token"
 )
 
@@ -108,7 +108,7 @@ Configure the SDK via environment variables, config files, or programmatically:
 
 ```bash
 # Environment variables
-export AISENTINEL_BASE_URL="https://api.aisentinel.ai"
+export AISENTINEL_BASE_URL="https://aisentinel.fly.dev"
 export AISENTINEL_TOKEN="your-token"
 export AISENTINEL_CACHE_TTL_SECONDS="600"
 ```
@@ -119,7 +119,7 @@ from aisentinel import Governor, SDKConfig
 
 config = SDKConfig.load(
     overrides={
-        "base_url": "https://api.aisentinel.ai",
+        "base_url": "https://aisentinel.fly.dev",
         "token": "your-token",
         "offline_mode_enabled": True
     }
@@ -134,7 +134,7 @@ Create a `aisentinel.json` file:
 
 ```json
 {
-  "base_url": "https://api.aisentinel.ai",
+  "base_url": "https://aisentinel.fly.dev",
   "token": "your-token",
   "cache_ttl_seconds": 300,
   "offline_mode_enabled": true,
