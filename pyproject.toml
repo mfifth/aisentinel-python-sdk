@@ -10,10 +10,10 @@ readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.8"
 authors = [
-    {name = "AISentinel Team", email = "team@aisentinel.ai"},
+    {name = "AISentinel Team", email = "team@aisentinel.info"},
 ]
 maintainers = [
-    {name = "AISentinel Team", email = "team@aisentinel.ai"},
+    {name = "AISentinel Team", email = "team@aisentinel.info"},
 ]
 keywords = ["ai", "governance", "security", "sdk", "agent", "audit"]
 classifiers = [
