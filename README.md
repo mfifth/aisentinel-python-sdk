@@ -3,7 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/aisentinel.svg)](https://pypi.org/project/aisentinel/)
 [![Python versions](https://img.shields.io/pypi/pyversions/aisentinel.svg)](https://pypi.org/project/aisentinel/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/aisentinel/aisentinel-python-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/aisentinel/aisentinel-python-sdk/actions/workflows/ci.yml)
+[![CI](https://github.com/mfifth/aisentinel-python-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/mfifth/aisentinel-python-sdk/actions/workflows/ci.yml)
 
 The official Python SDK for AISentinel - zero-latency governance for AI agents.
 
