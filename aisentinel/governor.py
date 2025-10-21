@@ -187,10 +187,11 @@ class Governor:
             self._record_metric("preflight_offline_miss", 1)
             safe_candidate = json.loads(json.dumps(candidate, default=_json_default))
             safe_state = json.loads(json.dumps(state, default=_json_default))
+
             def _enqueue_preflight() -> None:
                 self.preflight(safe_candidate, safe_state, tenant_id=tenant_id)
                 return None
-            
+
             self._offline_manager.enqueue(_enqueue_preflight, description="preflight")
             return {
                 "allowed": False,

@@ -26,6 +26,7 @@ class TestGovernor:
         with patch("aisentinel.governor.requests.Session") as mock_session_class:
             mock_session = Mock()
             mock_session.post.return_value = mock_response
+            mock_session.headers = {}
             mock_session_class.return_value = mock_session
 
             governor = Governor(base_url="https://test.com", token="test-token")
@@ -50,6 +51,7 @@ class TestGovernor:
         with patch("aisentinel.governor.requests.Session") as mock_session_class:
             mock_session = Mock()
             mock_session.post.return_value = mock_response
+            mock_session.headers = {}
             mock_session_class.return_value = mock_session
 
             governor = Governor(base_url="https://test.com", token="test-token")
