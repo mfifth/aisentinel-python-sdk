@@ -98,7 +98,7 @@ class SDKConfig:
         return config
 
     @classmethod
-    def _read_file(cls, path: Path) -> Dict[str, Any]:
+    def _read_file(cls, path: Path) -> Any:
         if not path.exists():
             raise ConfigError(f"Configuration file not found: {path}")
         try:

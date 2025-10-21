@@ -75,7 +75,12 @@ class RulepackCache:
                 if self._ttl <= 0 or age <= self._ttl:
                     self._record_metric("hits")
                     with path.open("r", encoding="utf-8") as handle:
-                        return json.load(handle)
+                        cached = json.load(handle)
+                        if isinstance(cached, dict):
+                            return cached
+                        else:
+                            # Invalid cache, remove it
+                            path.unlink(missing_ok=True)
                 self._record_metric("expired")
                 path.unlink(missing_ok=True)
         self._record_metric("misses")
@@ -182,10 +187,11 @@ class Governor:
             self._record_metric("preflight_offline_miss", 1)
             safe_candidate = json.loads(json.dumps(candidate, default=_json_default))
             safe_state = json.loads(json.dumps(state, default=_json_default))
-            self._offline_manager.enqueue(
-                lambda: self.preflight(safe_candidate, safe_state, tenant_id=tenant_id),
-                description="preflight",
-            )
+            def _enqueue_preflight() -> None:
+                self.preflight(safe_candidate, safe_state, tenant_id=tenant_id)
+                return None
+            
+            self._offline_manager.enqueue(_enqueue_preflight, description="preflight")
             return {
                 "allowed": False,
                 "offline": True,
@@ -206,9 +212,12 @@ class Governor:
         )
         response.raise_for_status()
         decision = response.json()
-        self._cache_decision(candidate, state, decision)
-        self._record_metric("preflight_online", 1)
-        return decision
+        if isinstance(decision, dict):
+            self._cache_decision(candidate, state, decision)
+            self._record_metric("preflight_online", 1)
+            return decision
+        else:
+            raise ValueError(f"Invalid response format from server: {decision}")
 
     def guarded_execute(
         self,
@@ -255,7 +264,11 @@ class Governor:
                 headers=headers,
             )
             response.raise_for_status()
-            return response.json()
+            result = response.json()
+            if isinstance(result, dict):
+                return result
+            else:
+                raise ValueError(f"Invalid rulepack format from server: {result}")
 
         return self._rulepack_cache.get(rulepack_id, version=version, fetcher=_download)
 

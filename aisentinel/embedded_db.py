@@ -152,7 +152,7 @@ class EmbeddedDatabase:
         return json.dumps(data, sort_keys=True)
 
     @staticmethod
-    def _json_loads(payload: str) -> Dict[str, Any]:
+    def _json_loads(payload: str) -> Any:
         return json.loads(payload)
 
     def store_report(
@@ -316,7 +316,8 @@ class EmbeddedDatabase:
             row = cursor.fetchone()
         if not row:
             return None
-        return self._json_loads(row[0])
+        loaded = self._json_loads(row[0])
+        return loaded if isinstance(loaded, dict) else None
 
     def purge_preflight_cache(self, older_than: float) -> int:
         """Remove cached decisions older than the supplied timestamp."""
