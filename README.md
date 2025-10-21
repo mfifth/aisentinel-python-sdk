@@ -252,7 +252,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-- 📖 [Documentation](https://docs.aisentinel.ai/python)
-- 🐛 [Issue Tracker](https://github.com/aisentinel/aisentinel-python-sdk/issues)
-- 💬 [Community Forum](https://community.aisentinel.ai)
-- 📧 [Email Support](mailto:support@aisentinel.ai)
+- 📖 [Documentation](https://aisentinel.fly.dev/docs)
+- 🐛 [Issue Tracker](https://github.com/mfifth/aisentinel-python-sdk/issues)
