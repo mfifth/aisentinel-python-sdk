@@ -251,16 +251,20 @@ class Governor:
         }
 
     def fetch_rulepack(
-        self, rulepack_id: str, *, version: Optional[str] = None
+        self, rulepack_id: str, *, version: Optional[str] = None, tenant_id: Optional[str] = None
     ) -> Dict[str, Any]:
         """Retrieve a rulepack leveraging the local cache when possible."""
 
         def _download() -> Dict[str, Any]:
+            tenant_config = self.config.for_tenant(tenant_id) if tenant_id else self.config
             params = {"version": version} if version else None
-            # Use per-request headers here as well to prevent header mutation side-effects
+            # Use per-request headers to avoid mutating the shared session headers and
+            # leaking tenant tokens across requests.
             headers = dict(self.session.headers)
+            if tenant_config.token and tenant_config.token != self.config.token:
+                headers.update({"Authorization": f"Bearer {tenant_config.token}"})
             response = self.session.get(
-                f"{self.base_url}/rulepacks/{rulepack_id}",
+                f"{tenant_config.base_url.rstrip('/')}/rulepacks/{rulepack_id}",
                 params=params,
                 headers=headers,
             )
